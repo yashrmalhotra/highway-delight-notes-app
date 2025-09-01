@@ -180,7 +180,10 @@ const SignIn = () => {
                 )}
               </>
             )}
-
+            <div className="flex justify-left items-center gap-1">
+              <input type="checkbox" name="keepmesignedin" id="" className="w-5 h-5" />
+              <label htmlFor="">Keep me logged in</label>
+            </div>
             {/* Get OTP button */}
             {!otpVisible && (
               <Button

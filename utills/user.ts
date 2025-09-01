@@ -1,5 +1,5 @@
 import User from "@/models/User";
-import { UserSchema } from "@/types/types";
+import { IUser, UserSchema } from "@/types/types";
 import { emailEvent } from "./emailemitter";
 import { connectToDataBase } from "./connectDB";
 const generateOTP = (): number => {
@@ -11,6 +11,11 @@ export const createUser = async (data: UserSchema) => {
   const { name, email, dob } = data;
   const otp = generateOTP();
   await connectToDataBase();
+  const user = await User.findOne({ email });
+
+  if (user?.email === email) {
+    throw new Error("User already exists");
+  }
   try {
     await User.create({
       name,
@@ -41,7 +46,7 @@ export const verifyOTP = async (data: { email: string; otp: string }): Promise<b
 export const generateLoginOTP = async (data: Record<string, any>): Promise<void> => {
   const otp = generateOTP();
   const { email } = data;
-
+  await connectToDataBase();
   try {
     const user = await User.findOne({ email });
     if (!user) {

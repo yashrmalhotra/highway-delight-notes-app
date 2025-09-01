@@ -7,6 +7,6 @@ export async function POST(req: Request) {
     await createUser(data);
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    return NextResponse.json({ messgae: error.message }, { status: 400 });
+    return NextResponse.json({ message: error.message }, { status: 400 });
   }
 }

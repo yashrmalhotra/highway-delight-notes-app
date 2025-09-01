@@ -4,7 +4,8 @@ import React, { useState } from "react";
 import { Button, TextField, InputAdornment, IconButton, CircularProgress } from "@mui/material";
 import { LocalizationProvider, DatePicker, DesktopDatePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { FaEye, FaEyeSlash, FaCalendarAlt } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { CiCalendar } from "react-icons/ci";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { SignUpschema } from "@/types/types";
@@ -17,10 +18,11 @@ import { useRouter } from "next/navigation";
 type FormValues = z.infer<typeof SignUpschema>;
 
 const SignUp = () => {
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [otpVisible, setOtpVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
+  const [otpVisible, setOtpVisible] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [calendarOpen, setCalendarOpen] = useState<boolean>(false);
+  const [customError, setCustomError] = useState<string>("");
   const router = useRouter();
 
   const {
@@ -80,10 +82,7 @@ const SignUp = () => {
         });
         setOtpVisible(true);
       } catch (error: any) {
-        setError("root", {
-          type: "manual",
-          message: error.response.data.message,
-        });
+        setCustomError(error.response.data.message);
       } finally {
         setIsLoading(false);
       }
@@ -143,7 +142,7 @@ const SignUp = () => {
                           startAdornment: (
                             <InputAdornment position="start">
                               <IconButton onClick={(e) => setCalendarOpen(true)}>
-                                <FaCalendarAlt />
+                                <img src="/calendar.svg" alt="calendar" />
                               </IconButton>
                             </InputAdornment>
                           ),
@@ -206,6 +205,7 @@ const SignUp = () => {
                   color: "white",
                   textAlign: "center",
                   width: "100%",
+                  height: "40px",
                   textTransform: "none",
                   ":hover": { backgroundColor: "#265fd6" },
                 }}
@@ -224,6 +224,7 @@ const SignUp = () => {
                   textAlign: "center",
                   width: "100%",
                   textTransform: "none",
+                  height: "40px",
                   ":hover": { backgroundColor: "#265fd6" },
                 }}
               >
@@ -231,7 +232,9 @@ const SignUp = () => {
               </Button>
             )}
           </form>
-          <div className="text-red-500 font-bolfd">{errors?.root && errors?.root?.message}</div>
+
+          {errors?.root && <div className="text-red-500 font-bold">{errors?.root?.message}</div>}
+          {customError && <div className="text-red-500 font-bold">{customError}</div>}
           <div className="mt-3 flex">
             <p className="text-[#969696]">Already have an account??</p>
             <p>

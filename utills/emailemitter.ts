@@ -3,19 +3,6 @@ import nodemailer from "nodemailer";
 
 let transporter: nodemailer.Transporter;
 
-function getTransporter() {
-  if (!transporter) {
-    transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL,
-        pass: process.env.APP_PASS, // Gmail App Password
-      },
-    });
-  }
-  return transporter;
-}
-
 export const emailEvent = (globalThis as any).emailEvent ?? new EventEmitter();
 
 if (!(globalThis as any).emailEvent) {
@@ -25,10 +12,18 @@ if (!(globalThis as any).emailEvent) {
 emailEvent.on("emitOTP", async (email: string, otp: number) => {
   try {
     console.log("cache email function emit");
-    const trans = getTransporter(); // ✅ reuse cached transporter
+    if (!transporter) {
+      console.log("new transporter creating");
+      transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAIL,
+          pass: process.env.APP_PASS, // Gmail App Password
+        },
+      });
+    }
 
-    await trans.verify();
-    const info = await trans.sendMail({
+    const info = await transporter.sendMail({
       from: `Highway Delite <${process.env.EMAIL}>`,
       to: email,
       subject: "Verification Email",

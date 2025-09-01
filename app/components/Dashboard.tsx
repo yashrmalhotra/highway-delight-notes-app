@@ -110,14 +110,14 @@ const Dashboard = () => {
         <div className="flex flex-col items-center container mx-auto">
           <div className="w-[80%]">
             <h3 className="font-semibold text-[18px] mb-5">Notes</h3>
-            <ul>
+            <ul className="flex flex-col gap-y-3">
               {notes.length === 0 && !isNotesLoading ? (
                 <div className=" shadow-all-sides bg-gray-100 p-2">No Notes found, Create One</div>
               ) : isNotesLoading ? (
                 <CircularProgress />
               ) : (
                 notes.map((item) => (
-                  <li key={item._id} className="rounded-[10px] shadow-all-sides flex justify-between items-center p-2">
+                  <li key={item._id} className="rounded-[10px] shadow-all-sides flex justify-between items-center p-2 ">
                     <p>{item.note}</p>
                     <IconButton onClick={() => deleteNote(item._id)}>{isLoading ? <CircularProgress size="10px" sx={{ color: "white" }} /> : <RiDeleteBin6Line />}</IconButton>
                   </li>
