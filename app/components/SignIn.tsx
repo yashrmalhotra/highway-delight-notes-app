@@ -84,7 +84,7 @@ const SignIn = () => {
     if (isValid) {
       try {
         setIsLoading(true);
-        // await axios.post("/api/loginotp", { email });
+        await axios.post("/api/loginotp", { email });
         setOtpVisible(true);
       } catch (error: any) {
         setCustomErron(error.response.data.message);
@@ -96,7 +96,7 @@ const SignIn = () => {
   const resendOTP = async () => {
     try {
       setIsOtpResendLogin(true);
-      // await axios.post("/api/loginotp", { email });
+      await axios.post("/api/loginotp", { email });
       setSec(120);
       intervalRef.current = setInterval(() => {
         setSec((prevSec) => prevSec - 1);

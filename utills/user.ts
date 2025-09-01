@@ -1,11 +1,35 @@
 import User from "@/models/User";
 import { UserSchema } from "@/types/types";
-import { emailEvent } from "./emailEmiitter";
+import nodemailer from "nodemailer";
 import { connectToDataBase } from "./connectDB";
 const generateOTP = (): number => {
   const otp = Math.floor(1000 + Math.random() * 9000);
   return otp;
 };
+const transPorter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.EMAIL,
+    pass: process.env.APP_PASS,
+  },
+});
+export const sendEmail = async (email: string, otp: number) => {
+  try {
+    await transPorter.sendMail({
+      from: `Highway Delite ${process.env.EMAIL}`,
+      to: email,
+      subject: "Verification Email",
+      html: `
+  <p style="font-size:15px; color:black;">OTP for verfication is <span style="font-weight:1000;">${otp}</span></p>
+  `,
+    });
+  } catch (error) {
+    console.log("error", error);
+  }
+};
+
 export const createUser = async (data: UserSchema) => {
   const { name, email, dob } = data;
   const otp = generateOTP();
@@ -17,7 +41,7 @@ export const createUser = async (data: UserSchema) => {
       dob,
       otp,
     });
-    emailEvent.emit("emitOTP", email, otp);
+    sendEmail(email, otp);
   } catch (error: any) {
     throw new Error(error.message);
   }
@@ -47,7 +71,7 @@ export const generateLoginOTP = async (data: Record<string, any>): Promise<void>
       throw new Error("User not found");
     }
     await User.updateOne({ email }, { $set: { otp } });
-    emailEvent.emit("emitOTP", email, otp);
+    sendEmail(email, otp);
   } catch (error: any) {
     throw new Error(error.message);
   }
