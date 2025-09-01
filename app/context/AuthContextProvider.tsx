@@ -1,7 +1,7 @@
 "use client";
 import { ContextValueTypes } from "@/types/types";
 import { useSession } from "next-auth/react";
-import useGoogleIdentify from "../components/GoogleOneTap";
+import useGoogleIdentify from "../hooks/GoogleOneTap";
 import React, { createContext, useContext, useState } from "react";
 const AuthContext = createContext<ContextValueTypes | null>(null);
 const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {

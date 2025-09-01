@@ -71,15 +71,8 @@ export const authOptions: NextAuthOptions = {
               email: user.email,
             };
           } else {
-            const doc = await User.create({
-              name,
-              email,
-            });
-            return {
-              id: doc._id as string,
-              name: doc.name,
-              email: doc.email,
-            };
+            throw new Error("User not found");
+            return null;
           }
         } catch (error: any) {
           throw new Error(error.message);
@@ -87,21 +80,6 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
-
-  callbacks: {
-    async signIn({ user, account }: NextAuthUserSignIn) {
-      if (!user || !user.email) return false;
-
-      // ✅ Additional check only for Google button login
-      if (account?.provider === "google") {
-        await connectToDataBase();
-        const existingUser = await User.findOne({ email: user.email });
-        if (!existingUser) return false; // block unknown user
-      }
-
-      return true;
-    },
-  },
 
   pages: {
     signIn: "/signin",
